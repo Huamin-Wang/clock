@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考试信息展示</title>
+    <style>
+        body {
+            font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333333;
+            font-size: 32px;
+            margin-bottom: 30px;
+            font-weight: 300;
+            text-transform: uppercase;
+            border-bottom: 2px solid #5cb85c;
+            padding-bottom: 10px;
+        }
+
+        .exam-info p {
+            margin: 15px 0;
+            color: #555;
+        }
+
+        .exam-info strong {
+            color: #5cb85c;
+        }
+
+        .exam-dates {
+            margin-bottom: 40px;
+            font-size: 1.5em;
+            color: #4a4a4a;
+        }
+
+        #clock, #countdown {
+            font-size: 2.5em;
+            color: #1e1c1c;
+            background-color: #17e817;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #countdown {
+            font-size: 2.5em;
+            color: #ec0d0d;
+            background-color: #17e817;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>考试信息</h2>
+    <div class="exam-info">
+        <p><strong>考试课程班:</strong> <span id="subject"></span></p>
+        <p><strong>考试总时长:</strong> <span id="examTime"></span> 分钟</p>
+        <p id="teacherMessage"><strong></strong> <span></span></p>
+    </div>
+    <div class="exam-dates">
+        <p><strong>考试开始时间:</strong> <span id="exam-start-time"></span></p>
+        <p><strong>考试结束时间:</strong> <span id="exam-end-time"></span></p>
+    </div>
+    <div id="clock"></div>
+    <div id="countdown"></div>
+</div>
+
+<script>
+    function formatTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${hours}小时${minutes}分钟${secs}秒`;
+    }
+
+    function updateClockAndCountdown() {
+        const now = new Date();
+        const examStartTimeStr = localStorage.getItem('examStartTime') || new Date().toISOString();
+        const examTime = parseInt(localStorage.getItem('examTime')) || 120; // 默认时长
+        const examStartTime = new Date(examStartTimeStr);
+        const examEndTime = new Date(examStartTime.getTime() + examTime * 60000);
+
+        const clockDisplay = document.getElementById('clock');
+        const countdownDisplay = document.getElementById('countdown');
+
+        clockDisplay.textContent = `当前时间：${now.toLocaleTimeString('zh-CN', {hour12: false})}`;
+
+        let timeDiff; // 计算时间差
+        if (now < examStartTime) {
+            timeDiff = examStartTime - now; // 距离考试开始的时间
+            countdownDisplay.textContent = `距离考试开始还有：${formatTime(timeDiff / 1000)}`;
+        } else if (now >= examEndTime) {
+            countdownDisplay.textContent = '考试已结束';
+            clearInterval(intervalId); // 停止倒计时
+        } else {
+            timeDiff = examEndTime - now; // 距离考试结束的时间
+            countdownDisplay.textContent = `距离考试结束还有：${formatTime(timeDiff / 1000)}`;
+        }
+    }
+    window.onload = function() {
+        // 初始化页面元素
+        const subject = localStorage.getItem('subject') || '示例课程班';
+        document.getElementById('subject').textContent = subject;
+
+        const examTime = localStorage.getItem('examTime') || '120';
+        document.getElementById('examTime').textContent = examTime;
+
+        const examStartTimeStr = localStorage.getItem('examStartTime') || new Date().toISOString();
+        const examStartTime = new Date(examStartTimeStr);
+        document.getElementById('exam-start-time').textContent = formatDate(examStartTime);
+
+        const examEndTime = new Date(examStartTime.getTime() + examTime * 60000);
+        document.getElementById('exam-end-time').textContent = formatDate(examEndTime);
+
+        const teacherMessage = localStorage.getItem('teacherMessage') || '';
+        if (teacherMessage) {
+            document.getElementById('teacherMessage').style.display = 'block';
+            document.getElementById('teacherMessage').getElementsByTagName('span')[0].textContent = teacherMessage;
+        } else {
+            document.getElementById('teacherMessage').style.display = 'none';
+        }
+
+        // 倒计时和时钟初始化
+        let intervalId = setInterval(updateClockAndCountdown, 1000);
+        updateClockAndCountdown(); // 初始调用以显示正确时间
+    };
+
+    // 辅助函数，用于格式化日期
+    function formatDate(date) {
+        return date.toLocaleString('zh-CN', { hour12: false });
+    }
+</script>
+</body>
+</html>

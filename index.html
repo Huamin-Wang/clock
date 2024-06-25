@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考试信息填写</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="datetime-local"] {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        textarea {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        button {
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        #warning{
+            color: #ec0d0d;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>考试信息填写</h2>
+    <div id="warning">1.注意先将本地电脑时间设置准确 2.如果无法选择考试时间，请切换浏览器</div>
+    <form id="examInfoForm">
+        <label for="subject">考试课程班:</label>
+        <input type="text" id="subject" name="subject" required>
+
+        <label for="examTime">考试时长（分钟）:</label>
+        <input type="number" id="examTime" name="examTime" required>
+
+        <label for="examStartTime">考试开始时间（在右侧选择，选择完毕后点击空白处结束）:</label>
+        <input type="datetime-local" id="examStartTime" name="examStartTime" required>
+
+        <label for="teacherMessage">考试补充信息，如考试地点（选填）:</label>
+        <textarea id="teacherMessage" name="teacherMessage" rows="4"></textarea>
+
+        <button type="button" onclick="saveExamInfo()">提交信息</button>
+    </form>
+</div>
+
+<script>
+    function saveExamInfo() {
+        var subject = document.getElementById('subject').value;
+        var examTime = document.getElementById('examTime').value;
+        var examStartTime = document.getElementById('examStartTime').value;
+        var teacherMessage = document.getElementById('teacherMessage').value;
+
+        localStorage.setItem('subject', subject);
+        localStorage.setItem('examTime', examTime);
+        localStorage.setItem('examStartTime', examStartTime);
+        localStorage.setItem('teacherMessage', teacherMessage);
+
+        // 跳转到考试信息展示页面
+        window.location.href = 'exam_info_form.html';
+    }
+</script>
+</body>
+</html>
