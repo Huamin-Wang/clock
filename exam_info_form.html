@@ -47,9 +47,17 @@
         }
 
         .exam-dates {
-            margin-bottom: 40px;
-            font-size: 1.5em;
+            margin-bottom: 20px; /* 减少间距 */
+            font-size: 2em; /* 增加字体大小 */
             color: #4a4a4a;
+            display: flex;
+            justify-content: center; /* 使日期行水平居中 */
+            align-items: center; /* 垂直居中对齐 */
+        }
+
+        .exam-dates p {
+            margin: 0; /* 移除段落的默认外边距 */
+            margin-right: 20px; /* 在结束时间前添加一些间隔 */
         }
 
         #clock, #countdown {
@@ -61,28 +69,32 @@
             margin-bottom: 40px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        /* 修改倒计时颜色 */
         #countdown {
-            font-size: 2.5em;
             color: #ec0d0d;
-            background-color: #17e817;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 40px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #teacherMessage{
+            font-size: 2em;
+            font-weight: bold;
+            color: #1e1c1c;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>考试信息</h2>
+    <h1 style="font-size: 3em"><span id="subject"></span></h1> <!-- 直接将课程名放入标题 -->
     <div class="exam-info">
-        <p><strong>考试课程班:</strong> <span id="subject"></span></p>
-        <p><strong>考试总时长:</strong> <span id="examTime"></span> 分钟</p>
-        <p id="teacherMessage"><strong></strong> <span></span></p>
+               <p id="teacherMessage" style=""><strong></strong> <span></span></p>
+         <p><strong>考试总时长:</strong> <span id="examTime"></span> 分钟</p>
     </div>
+    <!-- 将开始和结束时间放在同一行并增加字体大小 -->
     <div class="exam-dates">
-        <p><strong>考试开始时间:</strong> <span id="exam-start-time"></span></p>
-        <p><strong>考试结束时间:</strong> <span id="exam-end-time"></span></p>
+        <p><strong>考试时间:</strong></p>
+        <span id="exam-start-time"></span> <!-- 开始时间 -->
+        —
+        <span id="exam-end-time"></span> <!-- 结束时间 -->
     </div>
     <div id="clock"></div>
     <div id="countdown"></div>
@@ -120,7 +132,8 @@
             countdownDisplay.textContent = `距离考试结束还有：${formatTime(timeDiff / 1000)}`;
         }
     }
-    window.onload = function() {
+
+    window.onload = function () {
         // 初始化页面元素
         const subject = localStorage.getItem('subject') || '示例课程班';
         document.getElementById('subject').textContent = subject;
@@ -130,11 +143,12 @@
 
         const examStartTimeStr = localStorage.getItem('examStartTime') || new Date().toISOString();
         const examStartTime = new Date(examStartTimeStr);
-        document.getElementById('exam-start-time').textContent = formatDate(examStartTime);
+        document.getElementById('exam-start-time').textContent = formatDate1(examStartTime);
 
         const examEndTime = new Date(examStartTime.getTime() + examTime * 60000);
-        document.getElementById('exam-end-time').textContent = formatDate(examEndTime);
 
+        // 格式化考试结束时间为只有时间部分
+        document.getElementById('exam-end-time').textContent = formatTime1(examEndTime);
         const teacherMessage = localStorage.getItem('teacherMessage') || '';
         if (teacherMessage) {
             document.getElementById('teacherMessage').style.display = 'block';
@@ -149,9 +163,21 @@
     };
 
     // 辅助函数，用于格式化日期
-    function formatDate(date) {
-        return date.toLocaleString('zh-CN', { hour12: false });
+  function formatDate1(date) {
+    // 返回完整的日期和时间，格式为年月日 时分
+    return date.toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit',
+                                            hour12: false, hour: '2-digit', minute: '2-digit' });
+}
+
+   function formatTime1(date) {
+    // 返回时间的小时和分钟，格式为 HH:MM
+    return date.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' });
+}
+ function formatDate(date) {
+        return date.toLocaleString('zh-CN', {hour12: false});
     }
+
+
 </script>
 </body>
 </html>
