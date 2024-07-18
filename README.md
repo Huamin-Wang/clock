@@ -1,4 +1,4 @@
-##如需使用，直接访问：[huamin-wang.github.io/clock/](huamin-wang.github.io/clock/)
+##如需使用，直接访问：[https://huamin-wang.github.io/clock/](https://huamin-wang.github.io/clock/)
 # clock
 静态版本考试倒计时
 通过静态页面打开
